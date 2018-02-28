@@ -2,61 +2,74 @@ import numpy as np
 
 
 def matrix_multiplication(a, b):
-    c = np.array([[0, 0, 0],
-                  [0, 0, 0],
-                  [0, 0, 0]])
+    rows, _ = a.shape
+    _, cols = b.shape
+    mat = np.zeros((rows, cols))
 
+    for i in range(rows):
+        for j in range(rows):
+            for k in range(rows):
+                mat[i, j] += a[i, k] * b[k, j]
+    return mat
+
+
+def matrix_determinant(u):
+    det = 1.
     for i in range(3):
-        for j in range(3):
-            for k in range(3):
-                c[i, j] += a[i][k] * b[k][j]
-    return c
+        det *= u[i, i]
+    return det
 
 
-A = np.array([[10., -7., 0.],
-              [-3., 6., 2.],
-              [5., -1., 5.]])
+def swap_rows(m, s, f):
+    tmp = np.copy(m[f, :])
+    m[f, :] = np.copy(m[s, :])
+    m[s, :] = tmp
 
-L = np.array([[A[0][0],      0.,       0.],
-              [A[1][0], A[1][1],       0.],
-              [A[2][0], A[0][1], A[2][2]]])
 
-U = A
+def plu(a):
+    rows, cols = a.shape
+    p = np.eye(rows, cols)
+    for k in range(rows):
+        pivot_value = 0
+        for i in range(k, rows):
+            if abs(a[i, k]) > pivot_value:
+                pivot_value = abs(a[i, k])
+                row_with_max_elem = i
 
-"""for j in range(3):
-    U[0][j] = A[0][j]
+        if pivot_value == 0:
+            raise Exception("Degenerate matrix")
 
-for j in range(1, 3):
-    L[j][0] = A[j][0]/U[0][0]
+        swap_rows(a, k, row_with_max_elem)
+        swap_rows(p, k, row_with_max_elem)
 
-for i in range(1, 3):
-    for j in range(i, 3):
-        s = 0.
-        for k in range(i):
-            s += L[i][k] * U[k][j]
-        U[i][j] = A[i][j] - s
+        for i in range(k + 1, rows):
+            a[i, k] /= a[k, k]
+            for j in range(k + 1, rows):
+                a[i, j] -= a[i, k] * a[k, j]
 
-    for j in range(i, 3):
-        s = 0
-        for k in range(i):
-            s += L[i][k] * U[k][j]
-        L[j][i] = (A[j][i] - s)/U[i][i]
-"""
-for i in range(3):
-    for j in range(3):
-        U[0, i] = A[0, i]
-        L[i, 0] = A[i, 0] / U[0, 0]
-        s = 0.
-        for k in range(i):
-            s += L[i, k] * U[k, j]
+    l = np.zeros((rows, cols))
+    u = np.zeros((rows, cols))
 
-        U[i, j] = A[i, j] - s
-        if i > j:
-            L[j, i] = 0
-        else:
-            s = 0.
-            for k in range(i):
-                s += L[j, k] * U[k, i]
-            L[j, i] = (A[j, i] - s) / U[i, i]
+    for i in range(rows):
+        l[i, i] = 1.
+        for j in range(cols):
+            if i > j:
+                l[i, j] = a[i, j]
+            else:
+                u[i, j] = a[i, j]
 
-print matrix_multiplication(L, U)
+    return p, l, u
+
+
+def check_plu(p, l, u):
+    return matrix_multiplication(p, matrix_multiplication(l, u))
+
+
+A = np.array([[2., 7., -6.],
+              [8., 2., 1.],
+              [7., 4., 2.]])
+
+P, L, U = plu(A)
+
+print check_plu(P, L, U)
+
