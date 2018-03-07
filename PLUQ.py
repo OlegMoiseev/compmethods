@@ -86,32 +86,3 @@ def check_pluq(a, p, l, u, q):
     print plu_mat
 
     print "Matrices are equivalent:", np.allclose(a, plu_mat, atol=10e-16)
-
-
-A = np.array([[2., 7., 6.],
-              [8., 2., 1.],
-              [7., 4., 2.]])
-
-B = np.array([[2., 7., -6., 5., -7.],
-              [8., 2., 1., -56., 2.],
-              [7., 4., 2., 9., 3.],
-              [-1., 4., -6., -9., 3.],
-              [7., 4., 2., 9., 45.]])
-
-C = np.array([[2., 7.],
-              [8., 2.]])
-
-D = np.array([[2., 7., -6., 5., -7., 4.],
-              [8., 2., 1., -56., 2., 9.],
-              [7., 4., 2., 9., 3., 2.],
-              [-1., 4., -6., -9., 3., -4.],
-              [7., 4., 2., 9., 45., -7],
-              [-12., 34., -26., -19., 23., -54.]])
-try:
-
-    P, L, U, Q = pluq(D)
-    check_pluq(D, P, L, U, Q)
-    # print "Det:", matrix_determinant(U)
-
-except Exception as e:
-    print e
