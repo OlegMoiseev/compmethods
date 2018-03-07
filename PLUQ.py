@@ -35,52 +35,56 @@ def swap_cols(m, s, f):
     m[:, s] = tmp
 
 
-def plu(a_orig):
+def pluq(a_orig):
     a = np.copy(a_orig)
     rows, cols = a.shape
     p = np.eye(rows, cols)
-
+    q = np.eye(rows, cols)
 
     for k in range(rows):
         pivot_value = 0
 
         for i in range(k, rows):
-
-            if abs(a[i, k]) > pivot_value:
-                pivot_value = abs(a[i, k])
-                row_with_max_elem = i
+            for j in range(k, cols):
+                if abs(a[i, j]) > pivot_value:
+                    pivot_value = abs(a[i, j])
+                    row_with_max_elem = i
+                    col_with_max_elem = j
 
         if pivot_value < 10e-16:
             raise Exception("Degenerate matrix")
 
         swap_rows(a, k, row_with_max_elem)
-        swap_rows(p, k, row_with_max_elem)
+        swap_cols(a, k, col_with_max_elem)
+
+        swap_cols(p, k, row_with_max_elem)
+        swap_rows(q, k, col_with_max_elem)
 
         for i in range(k + 1, rows):
             a[i, k] /= a[k, k]
-            for j in range(k + 1, rows):
+            for j in range(k + 1, cols):
                 a[i, j] -= a[i, k] * a[k, j]
 
-    lower = np.zeros((rows, cols))
+    lower = np.eye(rows, cols)
     upper = np.zeros((rows, cols))
 
     for i in range(rows):
-        lower[i, i] = 1.
         for j in range(cols):
             if i > j:
                 lower[i, j] = a[i, j]
             else:
                 upper[i, j] = a[i, j]
 
-    return p, lower, upper
+    return p, lower, upper, q
 
 
-def check_plu(a, p, l, u):
+def check_pluq(a, p, l, u, q):
     print "Original matrix:"
     print a
-    print "P*L*U:"
-    plu_mat = matrix_multiplication(p, matrix_multiplication(l, u))
+    print "P*L*U*Q:"
+    plu_mat = matrix_multiplication(matrix_multiplication(p, matrix_multiplication(l, u)), q)
     print plu_mat
+
     print "Matrices are equivalent:", np.allclose(a, plu_mat, atol=10e-16)
 
 
@@ -105,8 +109,8 @@ D = np.array([[2., 7., -6., 5., -7., 4.],
               [-12., 34., -26., -19., 23., -54.]])
 try:
 
-    P, L, U = plu(D)
-    check_plu(D, P, L, U)
+    P, L, U, Q = pluq(D)
+    check_pluq(D, P, L, U, Q)
     # print "Det:", matrix_determinant(U)
 
 except Exception as e:
