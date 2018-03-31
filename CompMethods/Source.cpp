@@ -16,7 +16,7 @@ double returnAtan(const double x)
 	int count = 1;
 	do
 	{
-		phiSummand = phiSummand * -1 * (0.8 * x + 0.2) * (0.8 * x + 0.2)
+		phiSummand = -phiSummand * (0.8 * x + 0.2) * (0.8 * x + 0.2)
 		             * ((count - 1 << 1) + 1) / ((count << 1) + 1);
 		phi += phiSummand;
 
@@ -96,15 +96,16 @@ int main()
 {
 	std::cout << "x\tf(x)\tfa(x)\tdeltaf\n";
 	
+	double x = 0.1;
 	for (int i = 0; i <= 10; ++i)
 	{
-		const double x = 0.1 + 0.01 * i;
 		const double relativeVal = functionR(x);
 		const double accurateVal = functionComp(x);
-		
 
 		std::cout << x << '\t' << accurateVal << '\t' << relativeVal << '\t'
 				<< std::abs(accurateVal - relativeVal) << '\n';
+
+		x += 0.01;
 	}
 
 	std::cin.get();

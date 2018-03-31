@@ -18,7 +18,7 @@ def matrix_determinant(u):
     det = 1.
     for i in range(rows):
         det *= u[i, i]
-    if rows % 2:
+    if rows % 2 and rows != 1:
         det *= -1
     return det
 
@@ -35,12 +35,13 @@ def swap_cols(m, s, f):
     m[:, s] = tmp
 
 
-def pluq(a_orig):
+def decompose(a_orig):
     a = np.copy(a_orig)
     rows, cols = a.shape
     p = np.eye(rows, cols)
     q = np.eye(rows, cols)
 
+    rank = rows
     for k in range(rows):
         pivot_value = 0
 
@@ -52,13 +53,14 @@ def pluq(a_orig):
                     col_with_max_elem = j
 
         if pivot_value < 10e-16:
-            raise Exception("Degenerate matrix")
+            rank -= 1
+            continue
 
         swap_rows(a, k, row_with_max_elem)
         swap_cols(a, k, col_with_max_elem)
 
-        swap_cols(p, k, row_with_max_elem)
-        swap_rows(q, k, col_with_max_elem)
+        swap_rows(p, k, row_with_max_elem)
+        swap_cols(q, k, col_with_max_elem)
 
         for i in range(k + 1, rows):
             a[i, k] /= a[k, k]
@@ -75,14 +77,14 @@ def pluq(a_orig):
             else:
                 upper[i, j] = a[i, j]
 
-    return p, lower, upper, q
+    return p, lower, upper, q, rank
 
 
-def check_pluq(a, p, l, u, q):
+def check(a, p, l, u, q):
     print "Original matrix:"
     print a
-    print "P*L*U*Q:"
-    plu_mat = matrix_multiplication(matrix_multiplication(p, matrix_multiplication(l, u)), q)
-    print plu_mat
+    print "P^(-1)*L*U*Q^(-1):"
+    pluq_mat = matrix_multiplication(matrix_multiplication(p.T, matrix_multiplication(l, u)), q.T)
+    print pluq_mat
 
-    print "Matrices are equivalent:", np.allclose(a, plu_mat, atol=10e-16)
+    print "Matrices are equivalent:", np.allclose(a, pluq_mat, atol=10e-16)

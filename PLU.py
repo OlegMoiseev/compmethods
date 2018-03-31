@@ -7,7 +7,7 @@ def matrix_multiplication(a, b):
     mat = np.zeros((rows, cols))
 
     for i in range(rows):
-        for j in range(rows):
+        for j in range(cols):
             for k in range(rows):
                 mat[i, j] += a[i, k] * b[k, j]
     return mat
@@ -18,7 +18,7 @@ def matrix_determinant(u):
     det = 1.
     for i in range(rows):
         det *= u[i, i]
-    if rows % 2:
+    if rows % 2 and rows != 1:
         det *= -1
     return det
 
@@ -35,23 +35,23 @@ def swap_cols(m, s, f):
     m[:, s] = tmp
 
 
-def plu(a_orig):
+def decompose(a_orig):
     a = np.copy(a_orig)
     rows, cols = a.shape
     p = np.eye(rows, cols)
-
+    rank = rows
 
     for k in range(rows):
         pivot_value = 0
 
         for i in range(k, rows):
-
             if abs(a[i, k]) > pivot_value:
                 pivot_value = abs(a[i, k])
                 row_with_max_elem = i
 
         if pivot_value < 10e-16:
-            raise Exception("Degenerate matrix")
+            rank -= 1
+            continue
 
         swap_rows(a, k, row_with_max_elem)
         swap_rows(p, k, row_with_max_elem)
@@ -72,13 +72,13 @@ def plu(a_orig):
             else:
                 upper[i, j] = a[i, j]
 
-    return p, lower, upper
+    return p, lower, upper, rank
 
 
-def check_plu(a, p, l, u):
+def check(a, p, l, u):
     print "Original matrix:"
     print a
-    print "P*L*U:"
-    plu_mat = matrix_multiplication(p, matrix_multiplication(l, u))
+    print "P^(-1)*L*U:"
+    plu_mat = matrix_multiplication(p.T, matrix_multiplication(l, u))
     print plu_mat
     print "Matrices are equivalent:", np.allclose(a, plu_mat, atol=10e-16)
