@@ -15,3 +15,9 @@ def inverse(a):
         for j in range(rows):
             inv[j, i] = s[j]
     return inv
+
+
+def check(a, inv):
+    eye = PLU.matrix_multiplication(a, inv)
+    rows, cols = a.shape
+    return np.allclose(eye, np.eye(rows, cols), atol=10e-9)

@@ -7,7 +7,7 @@ def matrix_multiplication(a, b):
     mat = np.zeros((rows, cols))
 
     for i in range(rows):
-        for j in range(rows):
+        for j in range(cols):
             for k in range(rows):
                 mat[i, j] += a[i, k] * b[k, j]
     return mat

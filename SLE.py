@@ -20,7 +20,7 @@ def solve_lin_eq(a, b):
         y[i] = b[i] - sum
 
     x = np.zeros((rows, 1))
-    x[rows-1, 0] = y[rows-1] / U[rows-1, cols-1]
+    x[rows-1, 0] = y[rows-1] / u[rows-1, cols-1]
 
     for i in range(2, rows+1):
         sum = 0
@@ -29,8 +29,18 @@ def solve_lin_eq(a, b):
         x[rows-i, 0] = (y[rows-i] - sum) / u[rows-i, rows-i]
 
     return x
-    # check = PLU.matrix_multiplication(a, x)
-    # print check
+
+
+def check(a, x, b):
+    dim, _ = a.shape
+    ax = PLU.matrix_multiplication(a, x)
+    res = np.zeros((dim, 1))
+    z = np.zeros((dim, 1))
+    for i in range(dim):
+        res[i] = ax[i, 0] - b[i, 0]
+
+    return np.allclose(z, res, atol=10e-9)
+
 
 
 '''A = np.array([[2., 7., 6.],
