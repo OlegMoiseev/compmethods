@@ -20,6 +20,16 @@ def solve_lin_eq(a, b):
         y[i] = b[i] - sum
 
     x = np.zeros((rows, 1))
+
+    for j in range(rows-1, 0, -1):
+        if np.allclose(u[j], x, atol=10e-9) and b[j] == 0:
+            rows -= 1
+            cols -= 1
+        elif np.allclose(u[j], x, atol=10e-9) and not b[j] == 0:
+            print "Isn't cooperative!"
+            return x
+
+
     x[rows-1, 0] = y[rows-1] / u[rows-1, cols-1]
 
     for i in range(2, rows+1):
