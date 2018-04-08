@@ -18,7 +18,7 @@ def matrix_determinant(u):
     det = 1.
     for i in range(rows):
         det *= u[i, i]
-    if rows % 2 and rows != 1:
+    if rows % 2 and rows > 2:
         det *= -1
     return det
 

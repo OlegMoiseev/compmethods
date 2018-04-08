@@ -13,14 +13,15 @@ def matrix_multiplication(a, b):
     return mat
 
 
-def matrix_determinant(u):
+def matrix_determinant(u, transp):
     rows, cols = u.shape
     det = 1.
     for i in range(rows):
         det *= u[i, i]
-    if rows % 2 and rows != 1:
-        det *= -1
-    return det
+    if transp:
+        return -det
+    else:
+        return det
 
 
 def swap_rows(m, s, f):
@@ -36,6 +37,7 @@ def swap_cols(m, s, f):
 
 
 def decompose(a_orig):
+    transpose = False
     a = np.copy(a_orig)
     rows, cols = a.shape
     p = np.eye(rows, cols)
@@ -59,6 +61,11 @@ def decompose(a_orig):
         swap_rows(a, k, row_with_max_elem)
         swap_cols(a, k, col_with_max_elem)
 
+        if row_with_max_elem != k:
+            transpose = not transpose
+        if col_with_max_elem != k:
+            transpose = not transpose
+
         swap_rows(p, k, row_with_max_elem)
         swap_cols(q, k, col_with_max_elem)
 
@@ -77,7 +84,7 @@ def decompose(a_orig):
             else:
                 upper[i, j] = a[i, j]
 
-    return p, lower, upper, q, rank
+    return p, lower, upper, q, rank, transpose
 
 
 def check(a, p, l, u, q):

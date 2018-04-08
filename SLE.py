@@ -4,7 +4,7 @@ import PLU
 
 
 def solve_lin_eq(a, b):
-    p, l, u, rank = PLU.decompose(a)
+    p, l, u, q, rank, t = PLUQ.decompose(a)
 
     rows, cols = a.shape
     y = np.zeros(rows)
@@ -22,13 +22,12 @@ def solve_lin_eq(a, b):
     x = np.zeros((rows, 1))
 
     for j in range(rows-1, 0, -1):
-        if np.allclose(u[j], x, atol=10e-9) and b[j] == 0:
+        if np.allclose(u[j], x, atol=10e-9) and abs(y[j]) < 10e-9:
             rows -= 1
             cols -= 1
-        elif np.allclose(u[j], x, atol=10e-9) and not b[j] == 0:
-            print "Isn't cooperative!"
+        elif np.allclose(u[j], x, atol=10e-9) and not abs(y[j]) < 10e-9:
+            print "Isn't consistent!"
             return x
-
 
     x[rows-1, 0] = y[rows-1] / u[rows-1, cols-1]
 
@@ -37,7 +36,7 @@ def solve_lin_eq(a, b):
         for j in range(1, i):
             sum += x[rows-j, 0] * u[rows-i, cols-j]
         x[rows-i, 0] = (y[rows-i] - sum) / u[rows-i, rows-i]
-
+    x = PLU.matrix_multiplication(q, x)
     return x
 
 
