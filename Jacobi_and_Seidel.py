@@ -17,7 +17,6 @@ def matrix_multiplication(a, b):
         return np.zeros((rows, cols))
 
 
-
 def generate_diagonal_dominant():
     # Generate random dimensional, matrix & vector:
     dim = rand.randint(2, 10)
@@ -88,7 +87,6 @@ def jacobi(a, b):
 
 def seidel(a, b):
     currency = 10e-12
-    max_iterations = 10e3
     rows, cols = a.shape
     x_n_1 = np.ones((rows, 1))
     x_n = np.zeros((rows, 1))
@@ -127,31 +125,21 @@ def seidel(a, b):
 np.set_printoptions(formatter={'float': '{: 0.3f}'.format})
 np.seterr(all='warn')
 
-mat_pd, vec_pd = generate_positive_definite()
-print mat_pd
-print vec_pd
+for j in range(1):
+    mat_dd, vec_dd = generate_diagonal_dominant()
+    try:
+        print "Diagonal dominant - "
+        x_j_dd = jacobi(mat_dd, vec_dd)
 
-mat_dd, vec_dd = generate_diagonal_dominant()
-try:
-    print "Positive definite - "
-    x_j_pd = jacobi(mat_pd, vec_pd)
+    except Exception as e:
+        print e
+
+    else:
+        '''print mat
+        print vec
+        print x'''
+        print matrix_multiplication(mat_dd, x_j_dd) - vec_dd
+
     print "Diagonal dominant - "
-    x_j_dd = jacobi(mat_dd, vec_dd)
-
-except Exception as e:
-    print e
-
-else:
-    '''print mat
-    print vec
-    print x'''
-    print matrix_multiplication(mat_pd, x_j_pd) - vec_pd
-    print matrix_multiplication(mat_dd, x_j_dd) - vec_dd
-
-print "Positive definite - "
-x_s_pd = seidel(mat_pd, vec_pd)
-print matrix_multiplication(mat_pd, x_s_pd) - vec_pd
-
-print "Diagonal dominant - "
-x_s_dd = seidel(mat_dd, vec_dd)
-print matrix_multiplication(mat_dd, x_s_dd) - vec_dd
+    x_s_dd = seidel(mat_dd, vec_dd)
+    print matrix_multiplication(mat_dd, x_s_dd) - vec_dd
