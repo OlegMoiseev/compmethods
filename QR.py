@@ -17,28 +17,28 @@ def decompose(a_orig):
     r = np.copy(a_orig)
     rows, cols = r.shape
     q = np.eye(rows, cols)
-    t = np.eye(rows, cols)
+    mid_mat = np.eye(rows, cols)
 
     for start in range(rows):
         for j in range(1, rows - start):
             if (abs(r[start, start]) > 10e-9) or (abs(r[start+j, start]) > 10e-9):
-                l = (r[start, start]**2 + r[start+j, start]**2)**0.5
-                c = r[start, start] / l
-                s = r[start+j, start] / l
+                norm = (r[start, start]**2 + r[start+j, start]**2)**0.5
+                normalized_first = r[start, start] / norm
+                normalized_second = r[start+j, start] / norm
 
-                t[start, start] = c
-                t[start, start+j] = s
-                t[start+j, start] = -s
-                t[start+j, start+j] = c
+                mid_mat[start, start] = normalized_first
+                mid_mat[start, start+j] = normalized_second
+                mid_mat[start+j, start] = -normalized_second
+                mid_mat[start+j, start+j] = normalized_first
 
-                q = matrix_multiplication(t, q)
-                r = matrix_multiplication(t, r)
+                q = matrix_multiplication(mid_mat, q)
+                r = matrix_multiplication(mid_mat, r)
 
-                t[start, start] = 1
-                t[start, start + j] = 0
-                t[start + j, start] = 0
-                t[start + j, start + j] = 1
-        t[start, start] = 1
+                mid_mat[start, start] = 1
+                mid_mat[start, start + j] = 0
+                mid_mat[start + j, start] = 0
+                mid_mat[start + j, start + j] = 1
+        mid_mat[start, start] = 1
 
     return q, r
 
@@ -65,5 +65,7 @@ def solve_lin_eq(a, b):
 
 
 def check(a, q, r):
+    print "Q: ", q
+    print "R: ", r
     a_check = matrix_multiplication(q.T, r)
     return np.allclose(a, a_check, atol=10e-9)

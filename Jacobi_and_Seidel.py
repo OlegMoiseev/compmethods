@@ -9,8 +9,8 @@ def matrix_multiplication(a, b):
     try:
         for i in range(rows):
             for j in range(cols):
-                for k in range(rows):
-                    matrix[i, j] += a[i, k] * b[k, j]
+                for koef in range(rows):
+                    matrix[i, j] += a[i, koef] * b[koef, j]
         return matrix
     except:
         print "MULTIPLICATION FAILED!"
@@ -70,14 +70,14 @@ def jacobi(a, b):
         g[i, 0] = b[i, 0] / a[i, i]
     x_n_1 = np.copy(g)
     counter = 0
-    k = norm_oo(h) / (1 - norm_oo(h))
-    if k < 0:
-        k = 10
+    koef = norm_oo(h) / (1 - norm_oo(h))
+    if koef < 0:
+        koef = 10
     while True:
         x_n = matrix_multiplication(h, x_n_1) + g
         x_n, x_n_1 = x_n_1, x_n
         counter += 1
-        if not((k * abs(norm_oo(x_n_1 - x_n))) > currency and counter < max_iterations):
+        if not((koef * abs(norm_oo(x_n_1 - x_n))) > currency and counter < max_iterations):
             break
     print "Jacobi iterations: ", counter
     if counter > max_iterations or np.isnan(x_n_1[0, 0]):
@@ -103,7 +103,9 @@ def seidel(a, b):
         for j in range(cols):
             h[i, j] = -a[i, j] / a[i, i]
 
-    k = abs(norm_oo(r) / (1 - norm_oo(h)))
+    print norm_oo(h)
+    koef = abs(norm_oo(r) / (1 - norm_oo(h)))
+    print koef
 
     while True:
         for i in range(rows):
@@ -115,7 +117,7 @@ def seidel(a, b):
 
         x_n, x_n_1 = x_n_1, x_n
         counter += 1
-        if (k * abs(norm_oo(x_n_1 - x_n))) < currency:
+        if (koef * abs(norm_oo(x_n_1 - x_n))) < currency:
             break
 
     print "Seidel iterations: ", counter
@@ -125,9 +127,15 @@ def seidel(a, b):
 np.set_printoptions(formatter={'float': '{: 0.3f}'.format})
 np.seterr(all='warn')
 
-for j in range(1):
-    mat_dd, vec_dd = generate_diagonal_dominant()
-    try:
+for p in range(1):
+    # generate random matrix & vector:
+    # mat_dd, vec_dd = generate_diagonal_dominant()
+    mat_pd, vec_pd = generate_positive_definite()
+
+    print "A: ", mat_pd
+    print "b: ", vec_pd.T
+    # LE solution by Jacobi method:
+    '''try:
         print "Diagonal dominant - "
         x_j_dd = jacobi(mat_dd, vec_dd)
 
@@ -135,11 +143,11 @@ for j in range(1):
         print e
 
     else:
-        '''print mat
-        print vec
-        print x'''
         print matrix_multiplication(mat_dd, x_j_dd) - vec_dd
 
+    # LE solution by Seidel method:
     print "Diagonal dominant - "
-    x_s_dd = seidel(mat_dd, vec_dd)
-    print matrix_multiplication(mat_dd, x_s_dd) - vec_dd
+    x_s_dd = seidel(mat_dd, vec_dd)'''
+    print "Positive definition - "
+    x_s_pd = seidel(mat_pd, vec_pd)
+    print matrix_multiplication(mat_pd, x_s_pd) - vec_pd
