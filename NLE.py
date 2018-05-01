@@ -13,14 +13,17 @@ def derivative_func(var):
 
 
 accuracy = 10e-4
-x = 0.7
+x = 0.6
 count = 0
 
 while True:
     delta = func(x)/derivative_func(x)
     x -= delta
+    print x
     count += 1
-    if abs(delta) < accuracy:
+    if abs(delta) > accuracy:
+        continue
+    else:
         break
 
 print "X =", x

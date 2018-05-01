@@ -88,10 +88,10 @@ def decompose(a_orig):
 
 
 def check(a, p, l, u, q):
-    print "Original matrix:"
-    print a
-    print "P^(-1)*L*U*Q^(-1):"
+    print ("Original matrix:")
+    print (a)
+    print ("P^(-1)*L*U*Q^(-1):")
     pluq_mat = matrix_multiplication(matrix_multiplication(p.T, matrix_multiplication(l, u)), q.T)
-    print pluq_mat
+    print (pluq_mat)
 
-    print "Matrices are equivalent:", np.allclose(a, pluq_mat, atol=10e-16)
+    print ("Matrices are equivalent:", np.allclose(a, pluq_mat, atol=10e-16))

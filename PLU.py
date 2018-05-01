@@ -76,9 +76,9 @@ def decompose(a_orig):
 
 
 def check(a, p, l, u):
-    print "Original matrix:"
-    print a
-    print "P^(-1)*L*U:"
+    print ("Original matrix:")
+    print (a)
+    print ("P^(-1)*L*U:")
     plu_mat = matrix_multiplication(p.T, matrix_multiplication(l, u))
-    print plu_mat
-    print "Matrices are equivalent:", np.allclose(a, plu_mat, atol=10e-16)
+    print (plu_mat)
+    print ("Matrices are equivalent:", np.allclose(a, plu_mat, atol=10e-16))
