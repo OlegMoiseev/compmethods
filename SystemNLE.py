@@ -3,6 +3,7 @@ import time
 import SLE
 import PLUQ
 
+
 def get_jacobian(arg):
     jac = np.zeros((10, 10))
     jac[0, 0] = -np.sin(arg[0] * arg[1]) * arg[1]
@@ -141,12 +142,12 @@ def newton(x_orig):
     start_time = time.clock()
     n = 10
     while True:
-        F = get_func(x_start)
+        f = get_func(x_start)
         operations_count += n
-        J = get_jacobian(x_start)
+        j = get_jacobian(x_start)
         operations_count += n * n
 
-        delta = SLE.solve_lin_eq(J, F)
+        delta = SLE.solve_lin_eq(j, f)
         operations_count += 2 * n**3 // 3 + n * n
         x_start += delta
 
@@ -171,17 +172,17 @@ def newton_mod(x_orig):
     operations_count = 0
     n = 10
 
-    J = get_jacobian(x_start)
+    j = get_jacobian(x_start)
     operations_count += n * n
 
-    p, l, u, q, _, _ = PLUQ.decompose(J)
+    p, l, u, q, _, _ = PLUQ.decompose(j)
     operations_count += 2 * n ** 3 // 3
 
     while True:
-        F = get_func(x_start)
+        f = get_func(x_start)
         operations_count += n
 
-        delta = SLE.solve_lin_eq_wd(p, l, u, q, F)
+        delta = SLE.solve_lin_eq_wd(p, l, u, q, f)
         operations_count += n * n
 
         x_start += delta
@@ -208,13 +209,13 @@ def auto_modif_newton(x_orig, k):
     operations_count = 0
 
     while True:
-        F = get_func(x_start)
+        f = get_func(x_start)
         operations_count += n
 
-        J = get_jacobian(x_start)
+        j = get_jacobian(x_start)
         operations_count += n * n
 
-        delta = SLE.solve_lin_eq(J, F)
+        delta = SLE.solve_lin_eq(j, f)
         operations_count += 2 * n ** 3 // 3 + n * n
 
         x_start += delta
@@ -225,14 +226,14 @@ def auto_modif_newton(x_orig, k):
             break
 
         if iter_count > k:
-            p, l, u, q, _, _ = PLUQ.decompose(J)
+            p, l, u, q, _, _ = PLUQ.decompose(j)
             operations_count += 2 * n ** 3 // 3
 
             while True:
-                F = get_func(x_start)
+                f = get_func(x_start)
                 operations_count += n
 
-                delta = SLE.solve_lin_eq_wd(p, l, u, q, F)
+                delta = SLE.solve_lin_eq_wd(p, l, u, q, f)
                 operations_count += n * n
 
                 x_start += delta
@@ -262,15 +263,15 @@ def hybrid_newton(x_orig, k):
 
     while True:
         if k == 0 or iter_count % k == 0:
-            J = get_jacobian(x_start)
+            j = get_jacobian(x_start)
             operations_count += n * n
-            p, l, u, q, _, _ = PLUQ.decompose(J)
+            p, l, u, q, _, _ = PLUQ.decompose(j)
             operations_count += 2 * n ** 3 // 3
 
-        F = get_func(x_start)
+        f = get_func(x_start)
         operations_count += n
 
-        delta = SLE.solve_lin_eq_wd(p, l, u, q, F)
+        delta = SLE.solve_lin_eq_wd(p, l, u, q, f)
         operations_count += n * n
 
         x_start += delta
@@ -333,4 +334,3 @@ for i in range(6, 11, 2):
     print("Hybrid Newton method with Jacobian recalculating after", i, "th iteration:")
     hybrid_newton(x, i)
     print("\n")
-
