@@ -23,7 +23,8 @@ def full_func(x):
     return func(x) * weight_func(x)
 
 
-print "SciPy: ", integrate.quad(full_func, 1.8, 2.3)
+sc_py = integrate.quad(full_func, 1.8, 2.3)
+print "SciPy: ", sc_py
 print "WOLFRAM ALPHA: 1.18515\n"
 
 '''fig = plt.figure()
@@ -102,7 +103,7 @@ def cqf_opt():
     richardson = (sum3 - sum2) / (multiplier**m - 1.)
 
     while abs(richardson) > eps:
-        h_opt = ((b - a) / multiplier * (eps * (1. - multiplier**(-m))) / abs(sum2 - sum1))**(1. / m)
+        h_opt = .95 * (b - a) / multiplier * ((eps * (1. - multiplier**(-m))) / abs(sum2 - sum1))**(1. / m)
         num_partitions = np.ceil((b - a) / h_opt)
         sum1 = sum2
         sum2 = sum3
@@ -114,8 +115,11 @@ def cqf_opt():
 
 
 print "IQF: ", iqf(a, b)
-print "CQF half: ", cqf_half()
-print "CQF optimal: ", cqf_opt()
+c_h = cqf_half()
+print "CQF half: ", c_h
+c_o = cqf_opt()
+print "CQF optimal: ", c_o
+print "Delta: ", abs(c_o - sc_py[0])
 
 # a = 1.8
 # b = 2.3
