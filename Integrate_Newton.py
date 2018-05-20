@@ -2,9 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import integrate
 
-import SLE
-# 1.18515
-
 a = 1.8
 b = 2.3
 alpha = 0.
