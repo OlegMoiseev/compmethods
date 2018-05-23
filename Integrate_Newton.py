@@ -47,13 +47,13 @@ def iqf(start, finish):
     x3 = finish
     # p(x) = 1 / ((x - a)^alpha * (b - x)^beta))
 
-    nu0 = ((2.3 - x1)**0.4 - (2.3 - x3)**0.4)/0.4
-    nu1 = ((2.3 - x3)**1.4 - (2.3 - x1)**1.4)/1.4 + 2.3 * nu0
-    nu2 = ((2.3 - x1)**2.4 - (2.3 - x3)**2.4)/2.4 + 2 * 2.3 * nu1 - 2.3 * 2.3 * nu0
+    mu0 = ((2.3 - x1)**0.4 - (2.3 - x3)**0.4)/0.4
+    mu1 = ((2.3 - x3)**1.4 - (2.3 - x1)**1.4)/1.4 + 2.3 * mu0
+    mu2 = ((2.3 - x1)**2.4 - (2.3 - x3)**2.4)/2.4 + 2 * 2.3 * mu1 - 2.3 * 2.3 * mu0
 
-    a1 = (nu2 - nu1 * (x2 + x3) + nu0 * x2 * x3) / ((x2 - x1) * (x3 - x1))
-    a2 = -(nu2 - nu1 * (x1 + x3) + nu0 * x1 * x3) / ((x2 - x1) * (x3 - x2))
-    a3 = (nu2 - nu1 * (x2 + x1) + nu0 * x2 * x1) / ((x3 - x2) * (x3 - x1))
+    a1 = (mu2 - mu1 * (x2 + x3) + mu0 * x2 * x3) / ((x2 - x1) * (x3 - x1))
+    a2 = -(mu2 - mu1 * (x1 + x3) + mu0 * x1 * x3) / ((x2 - x1) * (x3 - x2))
+    a3 = (mu2 - mu1 * (x2 + x1) + mu0 * x2 * x1) / ((x3 - x2) * (x3 - x1))
 
     integral = a1 * func(x1) + a2 * func(x2) + a3 * func(x3)
 
@@ -86,6 +86,7 @@ def cqf_half():
         sum3 = cqf(num_partitions)
     
         m = - np.log((sum3 - sum2) / (sum2 - sum1)) / np.log(multiplier)  # convergence rate
+        print m
         richardson = (sum3 - sum2) / (multiplier**m - 1)
     return sum3 + richardson
 

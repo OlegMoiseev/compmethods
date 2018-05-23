@@ -69,19 +69,19 @@ def iqf(start, finish):
     x3 = finish
     # p(x) = 1 / ((x - a)^alpha * (b - x)^beta))
 
-    nu0 = ((2.3 - x1) ** 0.4 - (2.3 - x3) ** 0.4) / 0.4
-    nu1 = ((2.3 - x3) ** 1.4 - (2.3 - x1) ** 1.4) / 1.4 + 1 * 2.3 * nu0
-    nu2 = ((2.3 - x1) ** 2.4 - (2.3 - x3) ** 2.4) / 2.4 + 2 * 2.3 * nu1 - 2.3 * 2.3 * nu0
-    nu3 = ((2.3 - x3) ** 3.4 - (2.3 - x1) ** 3.4) / 3.4 + 3 * 2.3 * nu2 - 3 * 2.3 * 2.3 * nu1 + (2.3 ** 3) * nu0
-    nu4 = ((2.3 - x1) ** 4.4 - (2.3 - x3) ** 4.4) / 4.4 + 4 * 2.3 * nu3 - 6 * 2.3 * 2.3 * nu2 + 4 * (2.3 ** 3) * nu1 - (
-            2.3 ** 4) * nu0
-    nu5 = ((2.3 - x3) ** 5.4 - (2.3 - x1) ** 5.4) / 5.4 + 5 * 2.3 * nu4 - 10 * 2.3 * 2.3 * nu3 + 10 * (
-            2.3 ** 3) * nu2 - 5 * (2.3 ** 4) * nu1 + (2.3 ** 5) * nu0
+    mu0 = ((2.3 - x1) ** 0.4 - (2.3 - x3) ** 0.4) / 0.4
+    mu1 = ((2.3 - x3) ** 1.4 - (2.3 - x1) ** 1.4) / 1.4 + 1 * 2.3 * mu0
+    mu2 = ((2.3 - x1) ** 2.4 - (2.3 - x3) ** 2.4) / 2.4 + 2 * 2.3 * mu1 - 2.3 * 2.3 * mu0
+    mu3 = ((2.3 - x3) ** 3.4 - (2.3 - x1) ** 3.4) / 3.4 + 3 * 2.3 * mu2 - 3 * 2.3 * 2.3 * mu1 + (2.3 ** 3) * mu0
+    mu4 = ((2.3 - x1) ** 4.4 - (2.3 - x3) ** 4.4) / 4.4 + 4 * 2.3 * mu3 - 6 * 2.3 * 2.3 * mu2 + 4 * (2.3 ** 3) * mu1 - (
+            2.3 ** 4) * mu0
+    mu5 = ((2.3 - x3) ** 5.4 - (2.3 - x1) ** 5.4) / 5.4 + 5 * 2.3 * mu4 - 10 * 2.3 * 2.3 * mu3 + 10 * (
+            2.3 ** 3) * mu2 - 5 * (2.3 ** 4) * mu1 + (2.3 ** 5) * mu0
 
-    a_mat = np.array([[nu0, nu1, nu2],
-                      [nu1, nu2, nu3],
-                      [nu2, nu3, nu4]])
-    b_vec = np.array([[-nu3], [-nu4], [-nu5]])
+    a_mat = np.array([[mu0, mu1, mu2],
+                      [mu1, mu2, mu3],
+                      [mu2, mu3, mu4]])
+    b_vec = np.array([[-mu3], [-mu4], [-mu5]])
 
     tmp = SLE.solve_lin_eq(a_mat, b_vec)
     tmp_x = solve_polynom_3(tmp[2], tmp[1], tmp[0])
@@ -89,7 +89,7 @@ def iqf(start, finish):
     tmp__a = np.array([[1, 1, 1],
                        [tmp_x[0], tmp_x[1], tmp_x[2]],
                        [tmp_x[0] ** 2, tmp_x[1] ** 2, tmp_x[2] ** 2]])
-    tmp_b = np.array([[nu0], [nu1], [nu2]])
+    tmp_b = np.array([[mu0], [mu1], [mu2]])
 
     ans = SLE.solve_lin_eq(tmp__a, tmp_b)
 
@@ -124,6 +124,7 @@ def cqf_half():
         sum3 = cqf(num_partitions)
 
         m = - np.log((sum3 - sum2) / (sum2 - sum1)) / np.log(multiplier)  # convergence rate
+        print m
         richardson = (sum3 - sum2) / (multiplier ** m - 1)
     return sum3 + richardson
 
@@ -134,7 +135,7 @@ def cqf_opt():
     sum1 = cqf(1)
     sum2 = cqf(2)
     sum3 = cqf(4)
-    m = 3
+    m = 6
     richardson = (sum3 - sum2) / (multiplier ** m - 1.)
 
     while abs(richardson) > eps:
